@@ -12,7 +12,9 @@ $data = json_decode(file_get_contents($payloadFile), true);
 @unlink($payloadFile);
 
 if (!$data || empty($data['to'])) {
+    error_log('send_mail.php: payload invalide ou vide.');
     exit(1);
 }
 
-send_email($data['to'], $data['subject'], $data['body'], !empty($data['withCc']));
+$ok = send_email($data['to'], $data['subject'], $data['body'], !empty($data['withCc']));
+error_log('send_mail.php: envoi à ' . $data['to'] . ' -> ' . ($ok ? 'OK' : 'ECHEC'));
