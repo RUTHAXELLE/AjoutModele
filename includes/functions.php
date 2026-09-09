@@ -79,14 +79,41 @@ function csrf_check()
     }
 }
 
-// Envoi d'email simple (nécessite un serveur mail configuré, ex: sendmail/SMTP dans php.ini)
+// Envoi d'email via SMTP (PHPMailer). Retourne true/false, n'interrompt jamais l'action en cours.
 function send_email($to, $subject, $bodyHtml)
 {
-    $headers = "MIME-Version: 1.0\r\n";
-    $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
-    $headers .= 'From: ' . MAIL_FROM_NAME . ' <' . MAIL_FROM . ">\r\n";
+    if (!SMTP_HOST || !SMTP_USER || !SMTP_PASS) {
+        error_log('send_email: configuration SMTP manquante (SMTP_HOST/SMTP_USER/SMTP_PASS).');
+        return false;
+    }
 
-    return @mail($to, $subject, $bodyHtml, $headers);
+    $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
+    try {
+        $mail->isSMTP();
+        $mail->Host = SMTP_HOST;
+        $mail->Port = (int)SMTP_PORT;
+        $mail->SMTPAuth = true;
+        $mail->Username = SMTP_USER;
+        $mail->Password = SMTP_PASS;
+        $mail->SMTPSecure = \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->CharSet = 'UTF-8';
+
+        $mail->setFrom(MAIL_FROM, MAIL_FROM_NAME);
+        $mail->addAddress($to);
+        if (MAIL_CC) {
+            $mail->addCC(MAIL_CC);
+        }
+
+        $mail->isHTML(true);
+        $mail->Subject = $subject;
+        $mail->Body = $bodyHtml;
+
+        $mail->send();
+        return true;
+    } catch (\PHPMailer\PHPMailer\Exception $e) {
+        error_log('send_email failed: ' . $mail->ErrorInfo);
+        return false;
+    }
 }
 
 function statut_badge_class($statut)

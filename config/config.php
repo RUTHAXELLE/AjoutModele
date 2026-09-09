@@ -1,6 +1,14 @@
 <?php
 // Configuration générale de l'application
 
+require_once __DIR__ . '/../vendor/autoload.php';
+
+// En local (XAMPP) uniquement : charge les identifiants SMTP depuis un fichier non versionné.
+// En production (Render), ces variables sont définies directement dans le dashboard Render.
+if (file_exists(__DIR__ . '/env.local.php')) {
+    require __DIR__ . '/env.local.php';
+}
+
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -10,8 +18,14 @@ if (session_status() === PHP_SESSION_NONE) {
 $appBaseUrl = getenv('APP_BASE_URL');
 define('BASE_URL', rtrim($appBaseUrl !== false ? $appBaseUrl : '/AJOUT-MODELE', '/'));
 
-define('MAIL_FROM', getenv('MAIL_FROM') ?: 'noreply@ajout-modele.local');
+define('MAIL_FROM', getenv('MAIL_FROM') ?: (getenv('SMTP_USER') ?: 'noreply@ajout-modele.local'));
 define('MAIL_FROM_NAME', getenv('MAIL_FROM_NAME') ?: 'Ajout Marque/Modèle');
+
+define('SMTP_HOST', getenv('SMTP_HOST') ?: '');
+define('SMTP_PORT', getenv('SMTP_PORT') ?: 587);
+define('SMTP_USER', getenv('SMTP_USER') ?: '');
+define('SMTP_PASS', getenv('SMTP_PASS') ?: '');
+define('MAIL_CC', getenv('MAIL_CC') ?: '');
 
 $databaseUrl = getenv('DATABASE_URL');
 
