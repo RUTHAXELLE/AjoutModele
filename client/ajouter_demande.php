@@ -65,6 +65,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $old['ptac'] ?: null,
         ]);
 
+        $demandeId = $pdo->lastInsertId();
+        $objet = $old['type_demande'] === 'nouvelle_marque' ? $old['nouvelle_marque'] : ($old['marque_existante'] . ' / ' . $old['nom_modele']);
+        notify_admins(
+            $pdo,
+            'Nouvelle demande reçue #' . $demandeId,
+            '<p>Le client <strong>' . e($_SESSION['user_nom']) . '</strong> a soumis une nouvelle demande.</p>'
+                . '<p>Type : ' . e(type_demande_label($old['type_demande'])) . '<br>Objet : ' . e($objet) . '</p>'
+        );
+
         set_flash('success', 'Votre demande a été envoyée avec succès. Statut : En attente.');
         header('Location: ' . BASE_URL . '/client/mes_demandes.php');
         exit;

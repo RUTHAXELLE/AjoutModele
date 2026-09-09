@@ -30,15 +30,12 @@ $update = $pdo->prepare('UPDATE demandes SET relance_count = relance_count + 1, 
 $update->execute([$demandeId]);
 
 // Notifier tous les administrateurs
-$admins = $pdo->query("SELECT email, nom FROM users WHERE role = 'admin'")->fetchAll();
 $modele = $demande['type_demande'] === 'nouvelle_marque' ? $demande['nouvelle_marque'] : ($demande['marque_existante'] . ' - ' . $demande['nom_modele']);
 $subject = 'Relance sur une demande #' . $demandeId;
-$body = '<p>Le client <strong>' . e($_SESSION['user_nom']) . '</strong> (' . e($_SESSION['user_email']) . ') a relancé la demande n°' . $demandeId . '.</p>'
+$body = '<p>Le client <strong>' . e($_SESSION['user_nom']) . '</strong> a relancé la demande n°' . $demandeId . '.</p>'
     . '<p>Objet : ' . e($modele) . '<br>Statut actuel : ' . e($demande['statut']) . '</p>';
 
-foreach ($admins as $admin) {
-    send_email($admin['email'], $subject, $body);
-}
+notify_admins($pdo, $subject, $body);
 
 set_flash('success', 'Votre relance a bien été envoyée à l\'administrateur.');
 header('Location: ' . BASE_URL . '/client/mes_demandes.php');

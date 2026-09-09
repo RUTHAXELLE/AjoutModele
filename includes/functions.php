@@ -80,7 +80,8 @@ function csrf_check()
 }
 
 // Envoi d'email via SMTP (PHPMailer). Retourne true/false, n'interrompt jamais l'action en cours.
-function send_email($to, $subject, $bodyHtml)
+// $withCc : ajoute MAIL_CC en copie (notifications internes uniquement, pas les emails au client).
+function send_email($to, $subject, $bodyHtml, $withCc = false)
 {
     if (!SMTP_HOST || !SMTP_USER || !SMTP_PASS) {
         error_log('send_email: configuration SMTP manquante (SMTP_HOST/SMTP_USER/SMTP_PASS).');
@@ -100,7 +101,7 @@ function send_email($to, $subject, $bodyHtml)
 
         $mail->setFrom(MAIL_FROM, MAIL_FROM_NAME);
         $mail->addAddress($to);
-        if (MAIL_CC) {
+        if ($withCc && MAIL_CC) {
             $mail->addCC(MAIL_CC);
         }
 
@@ -113,6 +114,15 @@ function send_email($to, $subject, $bodyHtml)
     } catch (\PHPMailer\PHPMailer\Exception $e) {
         error_log('send_email failed: ' . $mail->ErrorInfo);
         return false;
+    }
+}
+
+// Envoie une notification à tous les comptes admin (utilisée pour nouvelle demande / relance).
+function notify_admins($pdo, $subject, $bodyHtml)
+{
+    $admins = $pdo->query("SELECT email FROM users WHERE role = 'admin'")->fetchAll();
+    foreach ($admins as $admin) {
+        send_email($admin['email'], $subject, $bodyHtml, true);
     }
 }
 
