@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } elseif ($action === 'traiter' && in_array($demande['statut'], ['En attente', 'En cours'], true)) {
             $pdo->prepare("UPDATE demandes SET statut = 'Traité', motif_rejet = NULL WHERE id = ?")->execute([$demandeId]);
             if ($client) {
-                send_email(
+                queue_email(
                     $client['email'],
                     'Votre demande n°' . $demandeId . ' a été traitée',
                     '<p>Bonjour ' . e($client['nom']) . ',</p><p>Votre demande concernant <strong>' . e($objet) . '</strong> a été <strong>traitée</strong>.</p>'
@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 $pdo->prepare("UPDATE demandes SET statut = 'Rejeté', motif_rejet = ? WHERE id = ?")->execute([$motif, $demandeId]);
                 if ($client) {
-                    send_email(
+                    queue_email(
                         $client['email'],
                         'Votre demande n°' . $demandeId . ' a été rejetée',
                         '<p>Bonjour ' . e($client['nom']) . ',</p><p>Votre demande concernant <strong>' . e($objet) . '</strong> a été <strong>rejetée</strong>.</p><p>Motif : ' . nl2br(e($motif)) . '</p>'

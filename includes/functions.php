@@ -98,6 +98,7 @@ function send_email($to, $subject, $bodyHtml, $withCc = false)
         $mail->Password = SMTP_PASS;
         $mail->SMTPSecure = \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
         $mail->CharSet = 'UTF-8';
+        $mail->Timeout = 15; // évite un blocage de plusieurs minutes si le réseau est lent (PHPMailer attend 300s par défaut)
 
         $mail->setFrom(MAIL_FROM, MAIL_FROM_NAME);
         $mail->addAddress($to);
@@ -117,12 +118,49 @@ function send_email($to, $subject, $bodyHtml, $withCc = false)
     }
 }
 
-// Envoie une notification à tous les comptes admin (utilisée pour nouvelle demande / relance).
-function notify_admins($pdo, $subject, $bodyHtml)
+// Localise le binaire CLI de PHP (utile pour lancer l'envoi d'email en tâche de fond) :
+// PHP_BINARY, exécuté depuis Apache, pointe vers httpd/apache2 et non vers php.exe/php.
+function php_cli_binary()
+{
+    if (stripos(PHP_OS, 'WIN') === 0) {
+        $candidate = dirname(php_ini_loaded_file()) . '\\php.exe';
+    } else {
+        $candidate = '/usr/local/bin/php';
+    }
+    return is_file($candidate) ? $candidate : PHP_BINARY;
+}
+
+// Envoie un email dans un processus séparé, pour ne pas faire attendre l'utilisateur
+// pendant l'envoi SMTP (qui peut être lent selon le réseau, jusqu'à plusieurs dizaines
+// de secondes sur certains hébergeurs). Ne remonte pas d'erreur : au pire l'email
+// n'est pas envoyé, mais l'action de l'utilisateur n'est jamais bloquée.
+function queue_email($to, $subject, $bodyHtml, $withCc = false)
+{
+    $file = tempnam(sys_get_temp_dir(), 'mail_');
+    file_put_contents($file, json_encode([
+        'to' => $to,
+        'subject' => $subject,
+        'body' => $bodyHtml,
+        'withCc' => $withCc,
+    ]));
+
+    $php = escapeshellarg(php_cli_binary());
+    $script = escapeshellarg(__DIR__ . '/../bin/send_mail.php');
+    $arg = escapeshellarg($file);
+
+    if (stripos(PHP_OS, 'WIN') === 0) {
+        pclose(popen("start /B \"\" $php $script $arg", 'r'));
+    } else {
+        exec("$php $script $arg > /dev/null 2>&1 &");
+    }
+}
+
+// Notifie tous les comptes admin (utilisée pour nouvelle demande / relance), en tâche de fond.
+function queue_notify_admins($pdo, $subject, $bodyHtml)
 {
     $admins = $pdo->query("SELECT email FROM users WHERE role = 'admin'")->fetchAll();
     foreach ($admins as $admin) {
-        send_email($admin['email'], $subject, $bodyHtml, true);
+        queue_email($admin['email'], $subject, $bodyHtml, true);
     }
 }
 
