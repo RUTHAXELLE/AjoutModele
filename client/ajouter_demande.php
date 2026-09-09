@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $demandeId = $pdo->lastInsertId();
         $objet = $old['type_demande'] === 'nouvelle_marque' ? $old['nouvelle_marque'] : ($old['marque_existante'] . ' / ' . $old['nom_modele']);
 
-        queue_notify_admins(
+        notify_admins(
             $pdo,
             'Nouvelle demande reçue #' . $demandeId,
             '<p>Le client <strong>' . e($_SESSION['user_nom']) . '</strong> a soumis une nouvelle demande.</p>'

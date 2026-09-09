@@ -35,7 +35,7 @@ $subject = 'Relance sur une demande #' . $demandeId;
 $body = '<p>Le client <strong>' . e($_SESSION['user_nom']) . '</strong> a relancé la demande n°' . $demandeId . '.</p>'
     . '<p>Objet : ' . e($modele) . '<br>Statut actuel : ' . e($demande['statut']) . '</p>';
 
-queue_notify_admins($pdo, $subject, $body);
+notify_admins($pdo, $subject, $body);
 
 set_flash('success', 'Votre relance a bien été envoyée à l\'administrateur.');
 header('Location: ' . BASE_URL . '/client/mes_demandes.php');
