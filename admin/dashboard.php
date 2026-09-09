@@ -27,12 +27,12 @@ require __DIR__ . '/../includes/header.php';
 
 <div class="grid-menu">
     <a class="menu-tile" href="<?= BASE_URL ?>/admin/demandes.php">
-        <div class="icon">📋</div>
+        <div class="icon">01</div>
         <h3>Gérer les demandes</h3>
         <p>Prise en compte, traitement et rejet des demandes clients.</p>
     </a>
     <a class="menu-tile" href="<?= BASE_URL ?>/admin/comptes.php">
-        <div class="icon">👤</div>
+        <div class="icon">02</div>
         <h3>Comptes clients</h3>
         <p>Créer et consulter les comptes clients.</p>
     </a>

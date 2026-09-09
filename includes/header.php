@@ -12,7 +12,7 @@ $user = current_user();
 </head>
 <body>
 <div class="topbar">
-    <div class="brand">🚗 Ajout Marque / Modèle</div>
+    <div class="brand"><span class="brand-mark"></span>Ajout Marque / Modèle</div>
     <?php if ($user): ?>
         <nav>
             <?php if ($user['role'] === 'client'): ?>

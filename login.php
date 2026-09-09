@@ -45,7 +45,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
 <div class="login-wrap">
     <div class="login-box">
-        <h1>🚗 Connexion</h1>
+        <span class="brand-mark"></span>
+        <h1>Connexion</h1>
         <?php if ($error): ?>
             <div class="flash flash-error"><?= e($error) ?></div>
         <?php endif; ?>

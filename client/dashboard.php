@@ -12,12 +12,12 @@ require __DIR__ . '/../includes/header.php';
 
 <div class="grid-menu">
     <a class="menu-tile" href="<?= BASE_URL ?>/client/ajouter_demande.php">
-        <div class="icon">➕</div>
+        <div class="icon">01</div>
         <h3>Ajouter Marque/Modèle</h3>
         <p>Soumettre une nouvelle demande d'ajout de marque ou de modèle.</p>
     </a>
     <a class="menu-tile" href="<?= BASE_URL ?>/client/mes_demandes.php">
-        <div class="icon">📋</div>
+        <div class="icon">02</div>
         <h3>Consultation</h3>
         <p>Suivre le statut de vos demandes et relancer si besoin.</p>
     </a>
