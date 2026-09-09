@@ -1,0 +1,6 @@
+# Empêche l'accès web direct aux fichiers sensibles (schémas SQL, documentation)
+<FilesMatch "\.(sql|md)$">
+    Require all denied
+</FilesMatch>
+
+Options -Indexes
