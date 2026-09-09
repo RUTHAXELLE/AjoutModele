@@ -1175,8 +1175,8 @@ CREATE TRIGGER trg_demandes_updated_at
     FOR EACH ROW
     EXECUTE FUNCTION set_updated_at();
 
--- Compte admin par défaut : email admin@ajout-modele.local / mot de passe Admin@123
+-- Compte admin par défaut : email it@emu-ci.com / mot de passe Admin@123
 -- (à changer après la première connexion)
 INSERT INTO users (nom, email, password, role) VALUES
-('Administrateur', 'admin@ajout-modele.local', '$2y$12$kinVje6PCpfnbPL5oDuWdu8BfTDEsvcNURc8.IPBo6m8OcXDZg3qW', 'admin')
+('Administrateur', 'it@emu-ci.com', '$2y$12$kinVje6PCpfnbPL5oDuWdu8BfTDEsvcNURc8.IPBo6m8OcXDZg3qW', 'admin')
 ON CONFLICT (email) DO NOTHING;

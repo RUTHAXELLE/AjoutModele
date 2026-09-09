@@ -84,14 +84,17 @@ require __DIR__ . '/../includes/header.php';
 <div class="card">
     <div class="section-title">
         <h1 style="margin:0;">Demandes reçues</h1>
-        <form method="get">
-            <select name="statut" onchange="this.form.submit()">
-                <option value="">Tous les statuts</option>
-                <?php foreach ($validStatuts as $s): ?>
-                    <option value="<?= e($s) ?>" <?= $filtre === $s ? 'selected' : '' ?>><?= e($s) ?></option>
-                <?php endforeach; ?>
-            </select>
-        </form>
+        <div style="display:flex;gap:10px;align-items:center;">
+            <form method="get">
+                <select name="statut" onchange="this.form.submit()">
+                    <option value="">Tous les statuts</option>
+                    <?php foreach ($validStatuts as $s): ?>
+                        <option value="<?= e($s) ?>" <?= $filtre === $s ? 'selected' : '' ?>><?= e($s) ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </form>
+            <a class="btn small outline" href="<?= BASE_URL ?>/admin/export.php<?= $filtre !== '' ? '?statut=' . urlencode($filtre) : '' ?>">Exporter (Excel)</a>
+        </div>
     </div>
 
     <?php if (!$demandes): ?>

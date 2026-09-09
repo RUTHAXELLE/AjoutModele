@@ -15,7 +15,7 @@ Application PHP/MySQL de gestion de demandes d'ajout de marque/modèle de véhic
 
 ## Compte admin par défaut
 
-- Email : `admin@ajout-modele.local`
+- Email : `it@emu-ci.com`
 - Mot de passe : `Admin@123`
 
 À changer/à remplacer une fois connecté (aucune interface de changement de mot de passe n'est fournie pour l'instant — modifiable directement en base si besoin).
@@ -46,7 +46,7 @@ Depuis ta machine (nécessite `psql`, fourni avec PostgreSQL) :
 psql "URL_EXTERNE_DE_LA_BASE" -f sql/postgres_schema.sql
 ```
 
-Cela crée les tables, charge les 1117 marques et le compte admin par défaut (`admin@ajout-modele.local` / `Admin@123`).
+Cela crée les tables, charge les 1117 marques et le compte admin par défaut (`it@emu-ci.com` / `Admin@123`).
 
 ### 3. Créer le Web Service
 
